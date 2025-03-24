@@ -8,17 +8,20 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ MongoDB Connection (Fixes EBADNAME error)
-const mongoURI = process.env.MONGO_URI; // Load from .env
+// ✅ Connect to MongoDB Atlas
+const mongoURI = process.env.MONGO_URI;  // Use your MongoDB URI from .env
 
 mongoose.connect(mongoURI, {
-    directConnection: true // ✅ Avoids SRV DNS issues
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,  // ⏳ Wait 5 sec before timeout
+    socketTimeoutMS: 45000 // ⏳ Allow sockets to stay open for 45 sec
 })
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-// ✅ Admission Schema
-const admissionSchema = new mongoose.Schema({
+// ✅ Define Student Schema
+const studentSchema = new mongoose.Schema({
     studentId: String,
     name: String,
     dob: String,
@@ -27,26 +30,37 @@ const admissionSchema = new mongoose.Schema({
     motherName: String,
     marks10: Number,
     marks12: Number
-}, { collection: "admissions" });
+}, { collection: "students" });  // ✅ Collection name must match Atlas
 
-const Admission = mongoose.model("Admission", admissionSchema);
+const Student = mongoose.model("Student", studentSchema);
 
-// ✅ Route: Admit Student
+// ✅ Route to Add Student Data
 app.post("/admit-student", async (req, res) => {
     try {
-        console.log("Received Data:", req.body);
+        console.log("Received Data:", req.body);  // ✅ Debugging log
 
         if (!req.body.studentId || !req.body.name) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-        const newAdmission = new Admission(req.body);
-        await newAdmission.save();
+        const newStudent = new Student(req.body);
+        await newStudent.save();
 
-        res.json({ message: "Student admission details saved successfully!" });
+        res.json({ message: "🎉 Student admission saved successfully!" });
     } catch (error) {
         console.error("❌ Error:", error);
-        res.status(500).json({ message: "Error saving admission details" });
+        res.status(500).json({ message: "Error saving student data" });
+    }
+});
+
+// ✅ Get All Students
+app.get("/students", async (req, res) => {
+    try {
+        const students = await Student.find();
+        res.json(students);
+    } catch (error) {
+        console.error("❌ Error fetching students:", error);
+        res.status(500).json({ message: "Error retrieving students" });
     }
 });
 
