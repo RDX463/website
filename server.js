@@ -10,11 +10,14 @@ app.use(bodyParser.json());
 
 // ✅ Connect to MongoDB Atlas
 const mongoURI = process.env.MONGO_URI;  // Use your MongoDB URI from .env
+console.log("MongoDB URI:", mongoURI); // Log the URI for debugging
+
+mongoose.set('debug', true); // Enable Mongoose debugging
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true, 
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,  // ⏳ Wait 5 sec before timeout
+    serverSelectionTimeoutMS: 10000,  // ⏳ Wait 10 sec before timeout
     socketTimeoutMS: 45000 // ⏳ Allow sockets to stay open for 45 sec
 })
 .then(() => console.log("✅ MongoDB Connected"))
