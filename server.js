@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // ✅ MongoDB Connection using Environment Variable
-const mongoURI = process.env.MONGO_URI || "mongodb+srv://rdx:<rDx@040603>@cluster0.rxum1.mongodb.net/myDatabase?retryWrites=true&w=majority";
+const mongoURI = process.env.MONGO_URI || "mongodb+srv://rdx:rDx@040603@cluster0.rxum1.mongodb.net/myDatabase?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
