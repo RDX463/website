@@ -15,7 +15,7 @@ document.getElementById("studentForm").addEventListener("submit", async function
     console.log("Sending Data:", studentData); // ✅ Debugging
 
     try {
-        const response = await fetch("http://localhost:8000/admit-student", {
+        const response = await fetch("https://website-cnlh.onrender.com/admit-student", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(studentData)
